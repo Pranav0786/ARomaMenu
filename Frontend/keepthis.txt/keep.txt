@@ -1,0 +1,105 @@
+import React, { useEffect, useState } from "react";
+import {
+  PermissionsAndroid,
+  Platform,
+  Button,
+  View,
+  StyleSheet,
+} from "react-native";
+import ARScreen from "./src/screens/AR/ARScreen";
+
+const App = () => {
+  const [showAR, setShowAR] = useState(false);
+
+  useEffect(() => {
+    async function requestPermissions() {
+      if (Platform.OS === "android") {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+      }
+    }
+    requestPermissions();
+  }, []);
+
+  if (showAR) {
+    return <ARScreen />;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Button title="Launch AR View" onPress={() => setShowAR(true)} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+export default App;
+
+
+
+// AR CODEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+import React, { useState } from "react";
+import {
+  ViroARScene,
+  ViroARSceneNavigator,
+  Viro3DObject,
+  ViroAmbientLight,
+  ViroTrackingReason,
+  ViroTrackingStateConstants,
+} from "@reactvision/react-viro";
+import { StyleSheet, View } from "react-native";
+
+const modelPath =
+  "https://raw.githubusercontent.com/google/filament/main/third_party/models/DamagedHelmet/DamagedHelmet.glb";
+
+const ModelARScene = () => {
+  const [tracking, setTracking] = useState(false);
+
+  const onInitialized = (state: any, reason: ViroTrackingReason) => {
+    console.log("Initialized", state, reason);
+    if (state === ViroTrackingStateConstants.TRACKING_NORMAL) {
+      setTracking(true);
+    } else if (state === ViroTrackingStateConstants.TRACKING_UNAVAILABLE) {
+      setTracking(false);
+    }
+  };
+
+  return (
+    <ViroARScene onTrackingUpdated={onInitialized}>
+      <ViroAmbientLight color="#ffffff" intensity={500} />
+      {tracking && (
+        <Viro3DObject
+          source={{ uri: modelPath }}
+          position={[0, 0, -1]}
+          scale={[0.2, 0.2, 0.2]}
+          rotation={[0, 0, 0]}
+          type="GLB"
+        />
+      )}
+    </ViroARScene>
+  );
+};
+
+const ARScreen = () => {
+  return (
+    <View style={{ flex: 1 }}>
+      <ViroARSceneNavigator
+        autofocus={true}
+        initialScene={{ scene: ModelARScene }}
+        style={StyleSheet.absoluteFillObject}
+      />
+    </View>
+  );
+};
+
+export default ARScreen;
