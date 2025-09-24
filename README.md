@@ -18,3 +18,6 @@ npm run dev
 ```
 npm start
 ```
+
+https://github.com/user-attachments/assets/13d577e4-dd2a-43af-a980-588b86a40bdd
+
