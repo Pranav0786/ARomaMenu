@@ -14,7 +14,7 @@ npm run dev
 ```
 #### (6) Navigate to frontend dir
 #### (7) Unzip the android folder and node_modules
-#### (8) Start the frontend
+#### (8) Start the frontend.
 ```
 npm start
 ```
